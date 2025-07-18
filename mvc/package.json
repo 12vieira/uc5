@@ -1,0 +1,23 @@
+{
+  "dependencies": {
+    "dotenv": "^17.2.0",
+    "express": "^5.1.0",
+    "pg": "^8.16.3",
+    "postgres": "^3.4.7"
+  },
+  "name": "mvc",
+  "version": "1.0.0",
+  "description": "Este projeto é um exemplo de aplicação Node.js utilizando o framework Express para gerenciamento de produtos. O objetivo é demonstrar a estruturação de um projeto modular, seguindo boas práticas de organização e convenções de código.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
