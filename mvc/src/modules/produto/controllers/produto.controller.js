@@ -9,7 +9,8 @@ class ProdutoController {
       if ( !nome || !preco || !descricao) {
         return resposta.status(400).json({ mensagem: "Todos os campos são obrigatorios!" });
       }
-      await ProdutoModel.cadastrar(nome, preco, descricao);
+      await ProdutoModel.create({ nome, preco, descricao });
+      //await ProdutoModel.cadastrar(nome, preco, descricao);
       resposta.status(201).json({ mensagem: "Produto criado com sucesso!" });
     } catch (error) {
       resposta.status(500).json({
@@ -22,8 +23,9 @@ class ProdutoController {
   // Lista todos os produtos
   static async listarTodos(requisicao, resposta) {
     try {
-      const produtos = await ProdutoModel.listarTodos();
-      if (produtos.length === 0) {
+      const produtos = await ProdutoModel.findAll();
+      // const produtos = await ProdutoModel.listarTodos();
+      if (!produtos || produtos.length === 0) {
         return resposta.status(400).json({ mensagem: "Banco de dados vazio!" });
       }
       resposta.status(200).json(produtos);
@@ -39,7 +41,8 @@ class ProdutoController {
   static async listarPorId(requisicao, resposta) {
     try {
       const id = parseInt(requisicao.params.id);
-      const produto = await ProdutoModel.listarPorId(id);
+      const produto = await ProdutoModel.findByPk(id);
+      // const produto = await ProdutoModel.listarPorId(id);
       if (!produto) {
         return resposta.status(404).json({ mensagem: "Produto não encontrado!" });
       }
@@ -57,8 +60,12 @@ class ProdutoController {
     try {
       const { novoNome, novoPreco, novaDescricao } = requisicao.body;
       const id = parseInt(requisicao.params.id);
-      const produto = await ProdutoModel.atualizar(id, novoNome, novoPreco, novaDescricao);
-      if (!produto) {
+      const produto = await ProdutoModel.update(
+        { novoNome, novoPreco, novaDescricao },
+        { where: { id } }
+      );
+      //const produto = await ProdutoModel.atualizar(id, novoNome, novoPreco, novaDescricao);
+      if (!produto || produto.length === 0) {
         return resposta.status(404).json({ mensagem: "Produto não encontrado!" });
       }
       resposta.status(200).json({ mensagem: "Produto atualizado com sucesso" });
@@ -74,7 +81,8 @@ class ProdutoController {
   static async deletarPorId(requisicao, resposta) {
     try {
       const id = parseInt(requisicao.params.id);
-      const produto = await ProdutoModel.deletarPorId(id); 
+      const produto = await ProdutoModel.destroy({ where: { id } });
+      //const produto = await ProdutoModel.deletarPorId(id); 
       if (produto === null) {
         return resposta.status(404).json({ mensagem: "Produto não encontrado!" });
       }
@@ -93,7 +101,8 @@ class ProdutoController {
   // Deleta todos os produtos
   static async deletarTodos(requisicao, resposta) {
     try {
-      await ProdutoModel.deletarTodos();
+      await ProdutoModel.destroy({ truncate: true });
+      //await ProdutoModel.deletarTodos();
       resposta.status(200).json({ mensagem: "Todos os produtos foram deletados!" });
     } catch (error) {
       resposta.status(500).json({
