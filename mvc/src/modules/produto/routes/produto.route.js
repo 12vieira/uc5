@@ -3,6 +3,9 @@ import ProdutoController from "../controllers/produto.controller.js";
 
 const router = express.Router();
 
+//Total de produtos
+router.get("/produtos/total", ProdutoController.totalProdutos);
+
 // Listar todos os produtos
 router.get("/produtos", ProdutoController.listarTodos);
 
@@ -21,8 +24,6 @@ router.delete("/produto/deletar/:id", ProdutoController.deletarPorId);
 // Deletar todos os produtos
 router.delete("/produtos/deletar", ProdutoController.deletarTodos);
 
-// Total de produtos
-router.get("/produtos/total", ProdutoController.totalProdutos);
 
 
 export default router;

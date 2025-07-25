@@ -1,4 +1,3 @@
-
 import dotenv from "dotenv";
 import { Sequelize } from "sequelize";
 
@@ -11,16 +10,22 @@ const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST,
     dialect: "postgres",
-    logging: true
+    logging: false
   }
 );
 
-try {
-  await sequelize.authenticate();
-  console.log("Connection has been established successfully.");
-} catch (error) {
-  console.error("Unable to connect to the database:", error.message);
+async function sincronizar() {
+    try {
+    await sequelize.authenticate();
+    console.log("Conexão realizada com sucesso!");
+    await sequelize.sync({ force: false, alter: false });
+    console.log("Tabela produto criada com sucesso");
+  } catch (error) {
+    console.error("Unable to connect to the database:", error.message);
+  }
 }
+
+sincronizar();
 
 export default sequelize;
 

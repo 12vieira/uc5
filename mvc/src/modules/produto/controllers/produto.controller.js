@@ -40,7 +40,7 @@ class ProdutoController {
   // Lista um produto pelo ID
   static async listarPorId(requisicao, resposta) {
     try {
-      const id = parseInt(requisicao.params.id);
+      const id = requisicao.params.id;
       const produto = await ProdutoModel.findByPk(id);
       // const produto = await ProdutoModel.listarPorId(id);
       if (!produto) {
@@ -59,12 +59,11 @@ class ProdutoController {
   static async atualizar(requisicao, resposta) {
     try {
       const { novoNome, novoPreco, novaDescricao } = requisicao.body;
-      const id = parseInt(requisicao.params.id);
+      const id = requisicao.params.id;
       const produto = await ProdutoModel.update(
-        { novoNome, novoPreco, novaDescricao },
+        { nome: novoNome, preco: novoPreco, descricao: novaDescricao },
         { where: { id } }
       );
-      //const produto = await ProdutoModel.atualizar(id, novoNome, novoPreco, novaDescricao);
       if (!produto || produto.length === 0) {
         return resposta.status(404).json({ mensagem: "Produto não encontrado!" });
       }
@@ -80,7 +79,7 @@ class ProdutoController {
   // Deleta um produto pelo ID
   static async deletarPorId(requisicao, resposta) {
     try {
-      const id = parseInt(requisicao.params.id);
+      const id = requisicao.params.id;
       const produto = await ProdutoModel.destroy({ where: { id } });
       //const produto = await ProdutoModel.deletarPorId(id); 
       if (produto === null) {
@@ -113,16 +112,17 @@ class ProdutoController {
   }
   // Retorna o total de produtos
   static async totalProdutos(requisicao, resposta) {
-    try {
-      const total = await ProdutoModel.totalProdutos();
-      resposta.status(200).json(total);
-    } catch (error) {
-      resposta.status(500).json({
-        // mensagem: "Erro interno do servidor. Por favor tente mais tarde!",
-        erro: error.message,
-      });
-    }
+  try {
+    const total = await ProdutoModel.count();
+    resposta.status(200).json({ total });
+  } catch (error) {
+    resposta.status(500).json({
+      mensagem: "Erro interno do servidor. Por favor tente mais tarde!",
+      erro: error.message,
+    });
   }
+}
+
 
 }
 
