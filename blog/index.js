@@ -1,74 +1,22 @@
-import { DataTypes } from "sequelize";
-import sequelize from "../../../config/database.js";
+import express from "express";
+import dotenv from "dotenv";
+import routeUsuario from "../blog/src/modules/usuario/routes/usuario.route.js"
 
-const UsuarioModel = sequilize.define(
-    "Usuario",
-    {
-        id:{
-            type: DataTypes.UUID,
-            defaultValue: DataTypes.UUIDV4,
-            primaryKey: true, 
-        },
-        nome:{
-            type: DataTypes.STRING,
-            allowNull: false,
-            validate: {
-                len:{
-                    args: [2,100],
-                    msg: "O nome deve ter entre 2 e 100 caracteres."
-                },
-                noteEmpty: {
-                    msg: "O nome não pode estar vazio."
-                },
-            },
-        },
-        email:{
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true,
-            validate: {
-                isEmail: {
-                    msg: "O email deve ser um endereço de email válido."
-                },
-                notEmpty: {
-                    msg: "O email não pode estar vazio."
-                },
-            },
-        },
-        senha:{
-            type: DataTypes.STRING,
-            allowNull: false,
-            validate: {
-                min: {
-                    args: 8,
-                    msg: "A senha deve ter mínimo de 8 caracteres."
-                },
-                notEmpty: {
-                    msg: "A senha não pode estar vazia."
-                },
-            },
-        },
-        foto_perfil:{
-            type: DataTypes.STRING,
-            allowNull: true,
-            validate: {
-                isUrl: {
-                    msg: "A foto de perfil deve ser uma URL válida."
-                },
-            },
-        },
-        criado_em: {
-            type: DataTypes.DATETIME,
-            defaultValue: DataTypes.NOW,
-        },
-        atualizado_em: {
-            type: DataTypes.DATETIME,
-            defaultValue: DataTypes.NOW,
-        }
-    },
-    {
-        tableName: "usuario",
-        createdAt: "criado_em",
-        updatedAt: "atualizado_em"
+import "../blog/src/config/database.js"
+
+dotenv.config()
+
+const app = express()
+const port = process.env.PORTA
+
+app.use(express.json())
+app.use(routeUsuario)
+
+
+app.listen(port, () => {
+    try {
+        console.log(`Servidor rodando na porta ${port}`)
+    } catch (error) {
+        console.log("Erro ao subir server:",error.message)
     }
-)
+})
