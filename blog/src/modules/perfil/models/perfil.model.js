@@ -37,15 +37,16 @@ const PerfilModel = sequelize.define(
                 },
             },
         },
-        data_nascimento:{
-            type: DataTypes.DATE,
+        data_nascimento: {
+            type: DataTypes.DATEONLY,
             allowNull: true,
             validate: {
-                isBefore: {
-                    args: DataTypes.NOW,
-                    msg: "A data de nascimento deve ser menor que a data atual."
-                },
-            },
+                isBeforeToday(value) {
+                    if (value && new Date(value) >= new Date()) {
+                        throw new Error("A data de nascimento deve ser anterior a data atual.");
+                    }
+                }
+            }
         },
         criado_em: {
             type: DataTypes.DATE,

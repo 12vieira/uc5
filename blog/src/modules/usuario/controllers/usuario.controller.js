@@ -8,9 +8,13 @@ class UsuarioController {
             if (!nome || !email || !senha) {
                 return resposta.status(400).json({mensagem: "Todos os campos são obrigatórios."});
             }
-            const salt = await bcrypt.genSaltSync(10);
-            const senhaHash = await bcrypt.hashSync(senha, salt);
-            await UsuarioModel.create({nome, email, senha: senhaHash, foto_perfil});
+            const salt = bcrypt.genSaltSync(10);
+            const senhaHash = bcrypt.hashSync(senha, salt);
+            await UsuarioModel.create(
+                {
+                    nome, email, senha: senhaHash, foto_perfil
+                },
+            );
             resposta.status(201).json({mensagem: "Usuário cadastrado com sucesso!"});
         } catch (error) {
             resposta.status(500).json({mensagem: "Erro ao cadastrar usuário.", erro: error.message});
@@ -18,7 +22,13 @@ class UsuarioController {
     }
     static async listarTodos(requisicao, resposta){
         try {
-            const usuarios = await UsuarioModel.findAll();
+            const usuarios = await UsuarioModel.findAll(
+                {
+                    attributes: {
+                        exclude: ['senha']
+                    }
+                }
+            );
             if (usuarios.length === 0) {
                 return resposta.status(404).json({mensagem: "Nenhum usuário encontrado."});
             }   
@@ -33,7 +43,13 @@ class UsuarioController {
             if (!id) {
                 return resposta.status(400).json({mensagem: "ID do usuário é obrigatório."});
             }
-            const user = await UsuarioModel.findByPk(id);
+            const user = await UsuarioModel.findByPk(id,
+                {
+                    attributes: {
+                        exclude: ['senha']
+                    }
+                }
+            );
             if (!user) {
                 return resposta.status(404).json({mensagem: "Usuário não encontrado."});
             }
@@ -49,8 +65,8 @@ class UsuarioController {
                 return resposta.status(400).json({mensagem: "ID do usuário é obrigatório."});
             }
             const {novoNome, novoEmail, novaSenha, novaFoto_perfil} = requisicao.body;
-            const salt = await bcrypt.genSalt(10);
-            const senhaHash = await bcrypt.hash(novaSenha, salt);
+            const salt = bcrypt.genSaltSync(10);
+            const senhaHash = bcrypt.hashSync(novaSenha, salt);
             if (!novoNome || !novoEmail || !novaSenha) {
                 return resposta.status(400).json({mensagem: "Todos os campos são obrigatórios."});
             }
@@ -59,7 +75,13 @@ class UsuarioController {
                 email: novoEmail,
                 senha: senhaHash,
                 foto_perfil: novaFoto_perfil
-            }, {where: {id}})
+            }, {where: {id}},
+            // {
+            //     attributes: {
+            //         exclude: ['senha']
+            //     }
+            // }
+            );
             resposta.status(201).json({mensagem:"Usuário atualizado com sucesso!"})
             } catch (error) {
             resposta.status(500).json({mensagem: "Erro ao listar usuários.", erro: error.message});
@@ -85,7 +107,7 @@ class UsuarioController {
             resposta.status(500).json({mensagem: "Erro interno do servidor. Por favor tente mais tarde!", erro: error.message});
         }
     }
-    static async totalUsuarios(requisicao, resposta){
+    static async total(requisicao, resposta){
         try {
             const total = await UsuarioModel.count();
             resposta.status(200).json({total});    

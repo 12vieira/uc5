@@ -48,14 +48,13 @@ class PerfilController {
             if (!id) {
                 return resposta.status(400).json({ mensagem: "ID do perfil é obrigatório." });
             }
-            const { bio, site_pessoal, data_nascimento } = requisicao.body;
-            const perfil = await PerfilModel.update(
-                { bio, site_pessoal, data_nascimento },
+            const { novaBio, novoSite_pessoal, novaData_nascimento } = requisicao.body;
+            const perfil = await PerfilModel.update({ 
+                bio: novaBio, 
+                site_pessoal: novoSite_pessoal, 
+                data_nascimento: novaData_nascimento },
                 { where: { id } }
             );
-            if (perfil[0] === 0) {
-                return resposta.status(404).json({ mensagem: "Perfil não encontrado." });
-            }
             resposta.status(200).json({ mensagem: "Perfil atualizado com sucesso!" });
         } catch (error) {
             resposta.status(500).json({ mensagem: "Erro ao atualizar perfil.", erro: error.message });
@@ -84,7 +83,15 @@ class PerfilController {
         } catch (error) {
             resposta.status(500).json({ mensagem: "Erro ao excluir perfis.", erro: error.message });
         }
-    }    
+    }
+    static async total(requisicao, resposta){
+        try {
+            const total = await PerfilModel.count();
+            resposta.status(200).json({total})
+        } catch (error) {
+            resposta.status(500).json({ mensagem: "Erro ao totalizar perfis.", erro: error.message });
+        }
+    }
 }
 
 export default PerfilController

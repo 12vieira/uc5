@@ -4,7 +4,7 @@ import UsuarioController from "../controllers/usuario.controller.js";
 const router = express.Router();
 
 //Total de usuarios
-router.get("/usuarios/total", UsuarioController.totalUsuarios);
+router.get("/usuarios/total", UsuarioController.total);
 
 // Listar todos os usuarios
 router.get("/usuarios", UsuarioController.listarTodos);
